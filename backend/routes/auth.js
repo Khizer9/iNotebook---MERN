@@ -14,7 +14,7 @@ router.post('/creatuser', [
     body('email', "Enter a valid Email").isEmail(),
     body('password', "Enter a valid Password").isLength({ min: 5 }),
 ], async (req, res) => {
-
+    let success = false;
     // If there are error return bad request and errors
     const errors = validationResult(req);
     if(!errors.isEmpty()){
@@ -25,6 +25,7 @@ router.post('/creatuser', [
     try{
     let user = await User.findOne({email: req.body.email})
     if(user){
+        success = false
         return res.status(400).json({ error: "Sorry a user with this email already exists"})
     }
     // Create a new user
@@ -42,7 +43,8 @@ router.post('/creatuser', [
         }
     }
     const authToken = jwt.sign(data, JWT_SECRET)
-    res.json({authToken})
+    success = true
+    res.json({success, authToken})
 
 } catch (err) {
     console.error(err.message)

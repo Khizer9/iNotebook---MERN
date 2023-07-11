@@ -1,7 +1,7 @@
 import React, { useState } from 'react'
 import { useNavigate } from 'react-router-dom';
 
-const Login = () => {
+const Login = (props) => {
     const [credentials, setCredentials] = useState({email: "", password: ""})
     let navigate = useNavigate()
 
@@ -11,19 +11,19 @@ const Login = () => {
             method: "POST", 
             headers: {
               "Content-Type": "application/json",
-              "auth-token": "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJ1c2VyIjp7ImlkIjoiNjQ4YWJmNTI3ZTZiY2VlYmRmOWJjY2FjIn0sImlhdCI6MTY4NzE2MDIxN30.QHHxWZrV9OHiKOGqoMsVwcqFEaOYS0cVdHyy1k2YUOM"
             },
             body: JSON.stringify({email: credentials.email, password: credentials.password})
           });
           const json = await response.json()
-          console.log(json);
+          // console.log(json, "json");
 
           if (json.success){
             // Save the auth token and redirect to home
-            localStorage.setItem('token', json.authtoken)
+            localStorage.setItem('token', json.authToken)
+            props.showAlert("Logged in successfully", "success")
             navigate('/');
           }else {
-            alert("Invalid credentials")
+            props.showAlert("Invalid Credentials", "danger")
           }
     }
 
@@ -32,6 +32,7 @@ const Login = () => {
       }
   return (
     <div>
+      <h1 className='my-2'>Login to continue to iNotebook</h1>
       <form onSubmit={handleSubmit}>
   <div className="mb-3">
     <label htmlFor="email" className="form-label">Email address</label>
